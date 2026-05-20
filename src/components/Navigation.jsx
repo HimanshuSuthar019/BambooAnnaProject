@@ -4,6 +4,9 @@ import { Menu, X, Leaf } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CartIcon } from "@/components/CartDrawer";
+import { useAuth } from "@/context/AuthContext";
+import { useLocation } from "wouter";
+import { User, LogOut, ShoppingBag } from "lucide-react";
 
 const navLinks = [
   { label: "Home", href: "#home" },
@@ -15,6 +18,14 @@ const navLinks = [
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const { user, logout } = useAuth();
+  const [, navigate] = useLocation();
+
+  function handleLogout() {
+  logout();
+  navigate("/");
+  }
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -68,6 +79,40 @@ export function Navigation() {
             ))}
 
             <CartIcon />
+
+            {user ? (
+    <div className="flex items-center gap-3">
+      <div className={cn(
+        "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium",
+        isScrolled ? "bg-emerald-50 text-emerald-800" : "bg-white/10 text-white"
+      )}>
+        <User className="w-4 h-4" />
+        <span>{user.name.split(" ")[0]}</span>
+      </div>
+      <button
+        onClick={handleLogout}
+        className={cn(
+          "flex items-center gap-1 text-sm font-medium transition-colors",
+          isScrolled ? "text-red-500 hover:text-red-700" : "text-white/70 hover:text-white"
+        )}
+      >
+        <LogOut className="w-4 h-4" />
+      </button>
+    </div>
+  ) : (
+    <Button
+      onClick={() => navigate("/login")}
+      className={cn(
+        "rounded-full px-6 font-semibold",
+        isScrolled
+          ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+          : "bg-white/90 text-emerald-800 hover:bg-white"
+      )}
+    >
+      Login
+    </Button>
+  )}
+
             <Button
               className={cn(
                 "rounded-full px-6 font-semibold",

@@ -2,6 +2,7 @@ import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, X, Plus, Minus, Trash2, ShoppingBag } from "lucide-react";
 import { createPortal } from "react-dom";
+import { useLocation } from "wouter";
 
 export function CartIcon() {
   const { totalItems, setIsCartOpen } = useCart();
@@ -54,6 +55,8 @@ export function CartIcon() {
 }
 
 export function CartDrawer() {
+
+  const [, navigate] = useLocation();
   const {
     cartItems,
     removeFromCart,
@@ -203,6 +206,7 @@ export function CartDrawer() {
             </p>
             <Button
               type="button"
+              onClick={() => { setIsCartOpen(false); navigate("/checkout"); }}
               className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-base font-semibold"
             >
               Proceed to Checkout →
