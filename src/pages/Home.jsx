@@ -1,3 +1,5 @@
+import { useState, useMemo } from "react";
+import { SearchFilter } from "@/components/SearchFilter";
 import { useProducts } from "@/hooks/use-products";
 import { Navigation } from "@/components/Navigation";
 import { ProductCard } from "@/components/ProductCard";
@@ -7,7 +9,43 @@ import { Button } from "@/components/ui/button";
 import { ArrowDown, Check, Sprout, Heart, Recycle, Leaf } from "lucide-react";
 
 export default function Home() {
-  const { data: products, isLoading } = useProducts();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("default");
+  const { data: productsData, isLoading } = useProducts();
+  const products = productsData || [];
+
+  const filteredProducts = useMemo(() => {
+  let result = [...products];
+
+  // Search filter
+  if (searchQuery.trim()) {
+    result = result.filter((p) =>
+      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.description.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }
+
+  // Sort
+  switch (sortBy) {
+    case "price-asc":
+      result.sort((a, b) => Number(a.price) - Number(b.price));
+      break;
+    case "price-desc":
+      result.sort((a, b) => Number(b.price) - Number(a.price));
+      break;
+    case "name-asc":
+      result.sort((a, b) => a.name.localeCompare(b.name));
+      break;
+    case "name-desc":
+      result.sort((a, b) => b.name.localeCompare(a.name));
+      break;
+    default:
+      break;
+  }
+
+  return result;
+}, [searchQuery, sortBy]);
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -117,10 +155,25 @@ export default function Home() {
       {/* Products Grid */}
       <section id="products" className="py-24 bg-background">
         <div className="container px-4 sm:px-6 lg:px-8">
+          
           <div className="text-center max-w-3xl mx-auto mb-16">
+  <h2 className="text-4xl font-bold mb-4 text-foreground">Featured Collection</h2>
+  <p className="text-muted-foreground text-lg mb-8">Handcrafted essentials for a modern, sustainable lifestyle.</p>
+
+  <SearchFilter onSearch={setSearchQuery} onFilter={setSortBy} />
+
+  {searchQuery && (
+    <p className="text-sm text-muted-foreground mt-4">
+      {filteredProducts.length === 0
+        ? "No products found"
+        : `${filteredProducts.length} product${filteredProducts.length > 1 ? "s" : ""} found for "${searchQuery}"`}
+    </p>
+  )}
+</div>
+          {/* <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-4xl font-bold mb-4 text-foreground">Featured Collection</h2>
             <p className="text-muted-foreground text-lg">Handcrafted essentials for a modern, sustainable lifestyle.</p>
-          </div>
+          </div> */}
 
           {isLoading ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -130,9 +183,35 @@ export default function Home() {
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {products?.map((product) => (
+              
+
+            {(searchQuery ? filteredProducts : products)?.map((product) => (
+  <ProductCard key={product.id} product={product} />
+))}
+{searchQuery && filteredProducts.length === 0 && (
+  <div className="col-span-3 flex flex-col items-center justify-center py-20 gap-3 text-center">
+    <p className="text-xl font-semibold text-muted-foreground">No products found</p>
+    <p className="text-sm text-muted-foreground">Try a different search term</p>
+  </div>
+)}
+
+{/*
+              {filteredProducts.length === 0 && searchQuery ? (
+              <div className="col-span-3 flex flex-col items-center justify-center py-20 gap-3 text-center">
+              <p className="text-xl font-semibold text-muted-foreground">No products found</p>
+              <p className="text-sm text-muted-foreground">Try a different search term</p>
+              </div>
+              ) : (
+                filteredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
-              ))}
+                ))
+              )} */}
+              
+              {/* {products?.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))} */}
+
+
             </div>
           )}
         </div>
@@ -162,7 +241,8 @@ export default function Home() {
                     <TableCell colSpan={5} className="h-24 text-center">Loading inventory...</TableCell>
                   </TableRow>
                 ) : (
-                  products?.map((product) => (
+                  // filteredProducts.map((product) => (
+                    (searchQuery ? filteredProducts : products)?.map((product) => (
                     <TableRow key={product.id} className="hover:bg-secondary/10 transition-colors">
                       <TableCell>
                         <img src={product.imageUrl} alt={product.name} className="w-12 h-12 rounded-lg object-cover bg-secondary/20" />

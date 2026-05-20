@@ -3,20 +3,27 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { ShoppingBag, Check } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useLocation } from "wouter";
 
 export function ProductCard({ product }) {
   const [imgError, setImgError] = useState(false);
   const [added, setAdded] = useState(false);
   const { addToCart } = useCart();
+  const [, navigate] = useLocation();
 
   function handleAddToCart() {
+    e.stopPropagation();
     addToCart(product);
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   }
 
   return (
-    <Card className="group overflow-hidden border-border/50 bg-white/50 hover:bg-white hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20 transition-all duration-300">
+    <Card
+    className="group overflow-hidden border-border/50 bg-white/50 hover:bg-white hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20 transition-all duration-300 cursor-pointer"
+    onClick={() => navigate(`/product/${product.id}`)}
+    >
+      
       <div className="aspect-[4/3] overflow-hidden relative bg-secondary/20">
         <img
           src={imgError ? "/images/products/bamboo-default.jpg" : product.imageUrl}

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # BambooAnna — React JS Project (No TypeScript)
 
 This is the full BambooAnna brand website converted from TypeScript to plain JavaScript + React.
@@ -72,3 +73,6 @@ Edit `src/lib/schema.js` → update the `PRODUCTS` array.
 
 ## Connect a Real Backend
 Replace the `mutationFn` in `src/hooks/use-messages.js` with a real `fetch()` call to your API.
+=======
+# BambooAnnaProject
+>>>>>>> 6c63599fb6170af26a7906a134898af31122d001

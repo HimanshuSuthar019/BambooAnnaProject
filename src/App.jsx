@@ -1,3 +1,4 @@
+
 import { Switch, Route } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { lazy, Suspense } from "react";
@@ -7,6 +8,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/context/CartContext";
 import { CartDrawer } from "./components/CartDrawer";
 
+const ProductDetail = lazy(() => import("@/pages/ProductDetail"));
 const Home = lazy(() => import("@/pages/Home"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
@@ -26,6 +28,7 @@ function Router() {
     <Suspense fallback={<PageLoader />}>
       <Switch>
         <Route path="/" component={Home} />
+        <Route path="/product/:id" component={ProductDetail} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>
