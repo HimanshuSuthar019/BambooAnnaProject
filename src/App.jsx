@@ -8,6 +8,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartDrawer } from "./components/CartDrawer";
+const Admin = lazy(() => import("@/pages/Admin"));
 
 const ProductDetail = lazy(() => import("@/pages/ProductDetail"));
 const Home = lazy(() => import("@/pages/Home"));
@@ -40,6 +41,7 @@ function Router() {
         <Route path="/checkout" component={Checkout} />
         <Route path="/order-success" component={OrderSuccess} />
         <Route path="/orders" component={Orders} />
+        <Route path="/admin" component={Admin} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>

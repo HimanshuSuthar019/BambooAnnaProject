@@ -7,12 +7,15 @@ import { ContactForm } from "@/components/ContactForm";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ArrowDown, Check, Sprout, Heart, Recycle, Leaf } from "lucide-react";
+import { useLocation } from "wouter";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("default");
   const { data: productsData, isLoading } = useProducts();
   const products = productsData || [];
+  const [, navigate] = useLocation();
+
 
   const filteredProducts = useMemo(() => {
   let result = [...products];
@@ -253,7 +256,15 @@ export default function Home() {
                       </TableCell>
                       <TableCell className="text-right font-mono">₹{product.price}</TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="sm" className="hover:text-primary">View</Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="hover:text-primary"
+                        onClick={() => navigate(`/product/${product.id}`)}
+                      >
+                      View
+                    </Button>
+                        {/* <Button variant="ghost" size="sm" className="hover:text-primary">View</Button> */}
                       </TableCell>
                     </TableRow>
                   ))

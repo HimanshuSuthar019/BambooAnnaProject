@@ -20,6 +20,23 @@ export function AuthProvider({ children }) {
     }
   }, [user]);
 
+  // Seed demo admin account
+useEffect(() => {
+  const users = JSON.parse(localStorage.getItem("bamboo-users") || "[]");
+  const adminExists = users.find((u) => u.email === "admin@bamboo.com");
+  if (!adminExists) {
+    users.push({
+      id: 1,
+      name: "Admin",
+      email: "admin@bamboo.com",
+      password: "admin123",
+      role: "admin",
+      createdAt: new Date().toISOString(),
+    });
+    localStorage.setItem("bamboo-users", JSON.stringify(users));
+  }
+}, []);
+
   function register(name, email, password) {
     // Get existing users
     const existing = JSON.parse(localStorage.getItem("bamboo-users") || "[]");
