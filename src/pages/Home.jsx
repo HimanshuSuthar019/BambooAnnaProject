@@ -346,7 +346,7 @@ export default function Home() {
             </div>
           </div>
           <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-background/40">
-            <p>&copy; 2024 BambooAnna Products. All rights reserved.</p>
+            <p>&copy; 2026 BambooAnna Products. All rights reserved.</p>
             <p>Designed with <Heart className="w-4 h-4 inline mx-1 text-primary" /> for the planet</p>
           </div>
         </div>
