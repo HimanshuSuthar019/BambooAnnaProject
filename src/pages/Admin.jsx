@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 
-const API = "http://localhost:5000/api";
+const API = "https://bambooannaproject-backend.onrender.com/api";
 
 export default function Admin() {
   const { user } = useAuth();

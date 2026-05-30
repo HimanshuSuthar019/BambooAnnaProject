@@ -51,10 +51,10 @@ export default function Checkout() {
     return true;
   }
 
-async function saveOrder(paymentInfo) {
+  async function saveOrder(paymentInfo) {
   try {
     const token = localStorage.getItem("bamboo-token");
-    const res = await fetch("http://localhost:5000/api/orders", {
+    const res = await fetch("https://bambooannaproject-backend.onrender.com/api/orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -76,6 +76,7 @@ async function saveOrder(paymentInfo) {
     setLoading(false);
   }
 }
+
 
   function handleCOD() {
     if (!validateForm()) return;
