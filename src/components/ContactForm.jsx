@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertMessageSchema } from "@/lib/schema";
-import { useCreateMessage } from "@/hooks/use-messages";
+import { useCreateOrder } from "@/hooks/use-messages";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Send, Loader2 } from "lucide-react";
 
 export function ContactForm() {
-  const { mutate, isPending } = useCreateMessage();
+  const { mutate, isPending } = useCreateOrder();
 
   const {
     register,

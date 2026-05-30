@@ -1,6 +1,6 @@
 import { useParams, useLocation } from "wouter";
 import { useCart } from "@/context/CartContext";
-import { PRODUCTS as products } from "@/lib/schema";
+import { useProducts } from "@/hooks/use-products";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { ShoppingBag, Check, ArrowLeft, Leaf } from "lucide-react";
@@ -13,7 +13,20 @@ export default function ProductDetail() {
   const [added, setAdded] = useState(false);
   const [imgError, setImgError] = useState(false);
 
-  const product = products.find((p) => String(p.id) === String(id));
+  const { data: products = [], isLoading } = useProducts();
+
+  // Find by MongoDB _id or numeric id
+  const product = products.find((p) =>
+    p._id === id || String(p.id) === id
+  );
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-12 h-12 rounded-full border-4 border-emerald-200 border-t-emerald-600 animate-spin" />
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -36,7 +49,7 @@ export default function ProductDetail() {
 
   // Related products (same category, exclude current)
   const related = products
-    .filter((p) => p.category === product.category && p.id !== product.id)
+    .filter((p) => p.category === product.category && p._id !== product._id)
     .slice(0, 3);
 
   return (
@@ -67,7 +80,6 @@ export default function ProductDetail() {
 
           {/* Info */}
           <div className="flex flex-col gap-6 pt-4">
-            {/* Badge */}
             <span className="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-700 text-sm font-semibold px-3 py-1 rounded-full w-fit">
               <Leaf className="w-3.5 h-3.5" />
               {product.category || "Eco Friendly"}
@@ -85,7 +97,6 @@ export default function ProductDetail() {
               {product.description}
             </p>
 
-            {/* Features */}
             <ul className="space-y-2">
               {["100% Natural Bamboo", "Eco-friendly & Sustainable", "Durable & Long-lasting", "Biodegradable"].map((f) => (
                 <li key={f} className="flex items-center gap-2 text-sm text-foreground">
@@ -96,7 +107,6 @@ export default function ProductDetail() {
             </ul>
 
             <div className="border-t pt-6 flex flex-col gap-4">
-              {/* Quantity */}
               <div className="flex items-center gap-4">
                 <span className="text-sm font-medium text-muted-foreground">Quantity</span>
                 <div className="flex items-center gap-3">
@@ -116,7 +126,6 @@ export default function ProductDetail() {
                 </div>
               </div>
 
-              {/* Add to Cart */}
               <Button
                 onClick={handleAddToCart}
                 className={`h-14 text-base font-semibold rounded-xl gap-2 transition-all duration-300 ${
@@ -142,8 +151,8 @@ export default function ProductDetail() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {related.map((item) => (
                 <div
-                  key={item.id}
-                  onClick={() => navigate(`/product/${item.id}`)}
+                  key={item._id}
+                  onClick={() => navigate(`/product/${item._id}`)}
                   className="cursor-pointer group rounded-2xl overflow-hidden border border-border/50 bg-white hover:shadow-xl hover:border-emerald-200 transition-all duration-300"
                 >
                   <div className="aspect-[4/3] overflow-hidden bg-secondary/20">

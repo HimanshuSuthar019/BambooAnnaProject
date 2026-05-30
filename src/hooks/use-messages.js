@@ -1,20 +1,20 @@
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { apiFetch } from "@/lib/api";
 
-export function useCreateMessage() {
+export function useCreateOrder() {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (data) => {
-      // Simulate API call — replace with real fetch if you have a backend
-      await new Promise((res) => setTimeout(res, 800));
-      return { success: true };
-    },
+    mutationFn: (orderData) =>
+      apiFetch("/orders", {
+        method: "POST",
+        body: JSON.stringify(orderData),
+      }),
     onSuccess: () => {
       toast({
-        title: "Message Sent!",
-        description: "We'll get back to you shortly.",
-        variant: "default",
+        title: "Order Placed! 🎉",
+        description: "Your order has been saved.",
       });
     },
     onError: (error) => {

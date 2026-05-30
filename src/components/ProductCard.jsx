@@ -11,8 +11,8 @@ export function ProductCard({ product }) {
   const { addToCart } = useCart();
   const [, navigate] = useLocation();
 
-  function handleAddToCart() {
-    e.stopPropagation();
+  function handleAddToCart(e) {
+    e?.stopPropagation();
     addToCart(product);
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
@@ -20,10 +20,9 @@ export function ProductCard({ product }) {
 
   return (
     <Card
-    className="group overflow-hidden border-border/50 bg-white/50 hover:bg-white hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20 transition-all duration-300 cursor-pointer"
-    onClick={() => navigate(`/product/${product.id}`)}
+      className="group overflow-hidden border-border/50 bg-white/50 hover:bg-white hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20 transition-all duration-300 cursor-pointer"
+      onClick={() => navigate(`/product/${product._id || product.id}`)}
     >
-      
       <div className="aspect-[4/3] overflow-hidden relative bg-secondary/20">
         <img
           src={imgError ? "/images/products/bamboo-default.jpg" : product.imageUrl}

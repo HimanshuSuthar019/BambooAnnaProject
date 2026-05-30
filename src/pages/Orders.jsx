@@ -2,24 +2,26 @@ import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { useAuth } from "@/context/AuthContext";
 import { useLocation } from "wouter";
-import { Package, ArrowLeft, ShoppingBag, CheckCircle, Clock } from "lucide-react";
+import { Package, ArrowLeft, ShoppingBag, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { apiFetch } from "@/lib/api";
 
 export default function Orders() {
   const { user } = useAuth();
   const [, navigate] = useLocation();
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) { navigate("/login"); return; }
-    const all = JSON.parse(localStorage.getItem("bamboo-orders") || "[]");
-    const mine = all.filter((o) => o.userId === user.id);
-    setOrders(mine.reverse());
+    apiFetch("/orders/my")
+      .then((data) => setOrders(data))
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, [user]);
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <div className="bg-white border-b sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2 text-emerald-700 font-bold text-lg">
@@ -37,7 +39,11 @@ export default function Orders() {
 
         <h1 className="text-3xl font-bold mb-6">My Orders</h1>
 
-        {orders.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <div className="w-10 h-10 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
+          </div>
+        ) : orders.length === 0 ? (
           <div className="bg-white rounded-2xl p-12 text-center border">
             <ShoppingBag className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
             <p className="text-xl font-semibold text-muted-foreground">No orders yet</p>
@@ -51,11 +57,10 @@ export default function Orders() {
         ) : (
           <div className="space-y-4">
             {orders.map((order) => (
-              <div key={order.id} className="bg-white rounded-2xl border border-border/50 shadow-sm overflow-hidden">
-                {/* Order Header */}
+              <div key={order._id} className="bg-white rounded-2xl border border-border/50 shadow-sm overflow-hidden">
                 <div className="flex items-center justify-between p-5 border-b bg-gray-50">
                   <div>
-                    <p className="font-mono font-bold text-emerald-700">{order.id}</p>
+                    <p className="font-mono font-bold text-emerald-700">{order.orderId}</p>
                     <p className="text-sm text-muted-foreground">
                       {new Date(order.createdAt).toLocaleDateString("en-IN", {
                         day: "numeric", month: "long", year: "numeric"
@@ -69,11 +74,9 @@ export default function Orders() {
                     </span>
                   </div>
                 </div>
-
-                {/* Order Items */}
                 <div className="p-5 space-y-3">
-                  {order.items.map((item) => (
-                    <div key={item.id} className="flex gap-3 items-center">
+                  {order.items.map((item, i) => (
+                    <div key={i} className="flex gap-3 items-center">
                       <img src={item.imageUrl} alt={item.name} className="w-12 h-12 rounded-lg object-cover" />
                       <div className="flex-1">
                         <p className="font-medium text-sm">{item.name}</p>
@@ -85,8 +88,6 @@ export default function Orders() {
                     </div>
                   ))}
                 </div>
-
-                {/* Delivery Address */}
                 <div className="px-5 pb-5">
                   <div className="flex items-start gap-2 p-3 bg-gray-50 rounded-xl text-sm">
                     <Package className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />

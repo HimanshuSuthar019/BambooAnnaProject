@@ -188,9 +188,10 @@ export default function Home() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               
 
-            {(searchQuery ? filteredProducts : products)?.map((product) => (
-  <ProductCard key={product.id} product={product} />
-))}
+       {(searchQuery ? filteredProducts : products)?.map((product) => (
+        <ProductCard key={product._id || product.id} product={product} />
+      ))}
+
 {searchQuery && filteredProducts.length === 0 && (
   <div className="col-span-3 flex flex-col items-center justify-center py-20 gap-3 text-center">
     <p className="text-xl font-semibold text-muted-foreground">No products found</p>
@@ -245,8 +246,8 @@ export default function Home() {
                   </TableRow>
                 ) : (
                   // filteredProducts.map((product) => (
-                    (searchQuery ? filteredProducts : products)?.map((product) => (
-                    <TableRow key={product.id} className="hover:bg-secondary/10 transition-colors">
+                  (searchQuery ? filteredProducts : products)?.map((product) => (
+                  <TableRow key={product._id || product.id} className="hover:bg-secondary/10 transition-colors">
                       <TableCell>
                         <img src={product.imageUrl} alt={product.name} className="w-12 h-12 rounded-lg object-cover bg-secondary/20" />
                       </TableCell>
@@ -260,7 +261,7 @@ export default function Home() {
                         variant="ghost"
                         size="sm"
                         className="hover:text-primary"
-                        onClick={() => navigate(`/product/${product.id}`)}
+                        onClick={() => navigate(`/product/${product._id || product.id}`)}
                       >
                       View
                     </Button>

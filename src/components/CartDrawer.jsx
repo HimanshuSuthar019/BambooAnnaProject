@@ -13,7 +13,6 @@ export function CartIcon() {
       onClick={(e) => {
         e.stopPropagation();
         e.preventDefault();
-        // alert('Clicked!'); // this is tempororly
         setIsCartOpen(true);
       }}
       style={{
@@ -30,23 +29,19 @@ export function CartIcon() {
     >
       <ShoppingCart style={{ width: 24, height: 24, color: "#059669" }} />
       {totalItems > 0 && (
-        <span
-          style={{
-            position: "absolute",
-            top: -2,
-            right: -2,
-            background: "#059669",
-            color: "white",
-            fontSize: "0.7rem",
-            fontWeight: 700,
-            borderRadius: "50%",
-            width: 20,
-            height: 20,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+        <span style={{
+          position: "absolute",
+          top: -2, right: -2,
+          background: "#059669",
+          color: "white",
+          fontSize: "0.7rem",
+          fontWeight: 700,
+          borderRadius: "50%",
+          width: 20, height: 20,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
           {totalItems > 9 ? "9+" : totalItems}
         </span>
       )}
@@ -55,8 +50,6 @@ export function CartIcon() {
 }
 
 export function CartDrawer() {
-
-  const [, navigate] = useLocation();
   const {
     cartItems,
     removeFromCart,
@@ -67,18 +60,19 @@ export function CartDrawer() {
     setIsCartOpen,
   } = useCart();
 
+  const [, navigate] = useLocation();
+
+  const getKey = (item) => item._id || item.id;
+
   return createPortal(
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        zIndex: 999999,
-        pointerEvents: isCartOpen ? "all" : "none",
-      }}
-    >
+    <div style={{
+      position: "fixed",
+      top: 0, left: 0,
+      width: "100vw",
+      height: "100vh",
+      zIndex: 99999,
+      pointerEvents: isCartOpen ? "all" : "none",
+    }}>
       {/* Overlay */}
       <div
         onClick={() => setIsCartOpen(false)}
@@ -93,22 +87,20 @@ export function CartDrawer() {
       />
 
       {/* Drawer */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          right: 0,
-          width: "100%",
-          maxWidth: "420px",
-          height: "100vh",
-          background: "white",
-          display: "flex",
-          flexDirection: "column",
-          transform: isCartOpen ? "translateX(0)" : "translateX(100%)",
-          transition: "transform 0.3s ease",
-          boxShadow: "-8px 0 32px rgba(0,0,0,0.15)",
-        }}
-      >
+      <div style={{
+        position: "absolute",
+        top: 0, right: 0,
+        width: "100%",
+        maxWidth: "420px",
+        height: "100vh",
+        background: "white",
+        display: "flex",
+        flexDirection: "column",
+        transform: isCartOpen ? "translateX(0)" : "translateX(100%)",
+        transition: "transform 0.3s ease",
+        boxShadow: "-8px 0 32px rgba(0,0,0,0.15)",
+      }}>
+
         {/* Header */}
         <div style={{ padding: "24px", borderBottom: "1px solid #e5e7eb", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -138,17 +130,13 @@ export function CartDrawer() {
               </div>
               <p style={{ fontSize: "1.1rem", fontWeight: 600, margin: 0 }}>Your cart is empty</p>
               <p style={{ color: "#6b7280", fontSize: "0.9rem", margin: 0 }}>Add some bamboo products!</p>
-              <Button
-                type="button"
-                onClick={() => setIsCartOpen(false)}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-6"
-              >
+              <Button onClick={() => setIsCartOpen(false)} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-6">
                 Continue Shopping
               </Button>
             </div>
           ) : (
             cartItems.map((item) => (
-              <div key={item.id} style={{ display: "flex", gap: "12px", padding: "16px", background: "#f9fafb", borderRadius: "12px", border: "1px solid #e5e7eb" }}>
+              <div key={getKey(item)} style={{ display: "flex", gap: "12px", padding: "16px", background: "#f9fafb", borderRadius: "12px", border: "1px solid #e5e7eb" }}>
                 <img
                   src={item.imageUrl}
                   alt={item.name}
@@ -160,7 +148,7 @@ export function CartDrawer() {
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <button
                       type="button"
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      onClick={() => updateQuantity(getKey(item), item.quantity - 1)}
                       style={{ width: 28, height: 28, borderRadius: "50%", border: "1px solid #e5e7eb", background: "white", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                     >
                       <Minus style={{ width: 12, height: 12 }} />
@@ -168,7 +156,7 @@ export function CartDrawer() {
                     <span style={{ width: 28, textAlign: "center", fontWeight: 600, fontSize: "0.9rem" }}>{item.quantity}</span>
                     <button
                       type="button"
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      onClick={() => updateQuantity(getKey(item), item.quantity + 1)}
                       style={{ width: 28, height: 28, borderRadius: "50%", border: "1px solid #e5e7eb", background: "white", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                     >
                       <Plus style={{ width: 12, height: 12 }} />
@@ -178,7 +166,7 @@ export function CartDrawer() {
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "space-between", flexShrink: 0 }}>
                   <button
                     type="button"
-                    onClick={() => removeFromCart(item.id)}
+                    onClick={() => removeFromCart(getKey(item))}
                     style={{ padding: "6px", borderRadius: "8px", border: "none", background: "transparent", cursor: "pointer", color: "#9ca3af" }}
                   >
                     <Trash2 style={{ width: 16, height: 16 }} />

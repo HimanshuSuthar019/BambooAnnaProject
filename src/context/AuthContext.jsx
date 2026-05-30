@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { apiFetch } from "@/lib/api";
 
 const AuthContext = createContext(null);
 
@@ -17,62 +18,28 @@ export function AuthProvider({ children }) {
       localStorage.setItem("bamboo-user", JSON.stringify(user));
     } else {
       localStorage.removeItem("bamboo-user");
+      localStorage.removeItem("bamboo-token");
     }
   }, [user]);
 
-  // Seed demo admin account
-useEffect(() => {
-  const users = JSON.parse(localStorage.getItem("bamboo-users") || "[]");
-  const adminExists = users.find((u) => u.email === "admin@bamboo.com");
-  if (!adminExists) {
-    users.push({
-      id: 1,
-      name: "Admin",
-      email: "admin@bamboo.com",
-      password: "admin123",
-      role: "admin",
-      createdAt: new Date().toISOString(),
+  async function register(name, email, password) {
+    const data = await apiFetch("/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ name, email, password }),
     });
-    localStorage.setItem("bamboo-users", JSON.stringify(users));
-  }
-}, []);
-
-  function register(name, email, password) {
-    // Get existing users
-    const existing = JSON.parse(localStorage.getItem("bamboo-users") || "[]");
-
-    // Check if email already exists
-    if (existing.find((u) => u.email === email)) {
-      throw new Error("Email already registered");
-    }
-
-    // Save new user
-    const newUser = {
-      id: Date.now(),
-      name,
-      email,
-      password, // in real app this would be hashed
-      role: "user",
-      createdAt: new Date().toISOString(),
-    };
-    existing.push(newUser);
-    localStorage.setItem("bamboo-users", JSON.stringify(existing));
-
-    // Auto login after register
-    const { password: _, ...safeUser } = newUser;
-    setUser(safeUser);
-    return safeUser;
+    localStorage.setItem("bamboo-token", data.token);
+    setUser(data.user);
+    return data.user;
   }
 
-  function login(email, password) {
-    const existing = JSON.parse(localStorage.getItem("bamboo-users") || "[]");
-    const found = existing.find(
-      (u) => u.email === email && u.password === password
-    );
-    if (!found) throw new Error("Invalid email or password");
-    const { password: _, ...safeUser } = found;
-    setUser(safeUser);
-    return safeUser;
+  async function login(email, password) {
+    const data = await apiFetch("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    });
+    localStorage.setItem("bamboo-token", data.token);
+    setUser(data.user);
+    return data.user;
   }
 
   function logout() {

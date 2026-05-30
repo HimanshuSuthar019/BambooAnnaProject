@@ -12,14 +12,12 @@ export function CartProvider({ children }) {
     }
   });
 
-  // ← THIS WAS MISSING
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("bamboo-cart", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // Prevent background scroll when cart is open
   useEffect(() => {
     if (isCartOpen) {
       document.body.style.overflow = "hidden";
@@ -30,11 +28,12 @@ export function CartProvider({ children }) {
   }, [isCartOpen]);
 
   function addToCart(product) {
+    const key = product._id || product.id;
     setCartItems((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
+      const existing = prev.find((item) => (item._id || item.id) === key);
       if (existing) {
         return prev.map((item) =>
-          item.id === product.id
+          (item._id || item.id) === key
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
@@ -43,18 +42,20 @@ export function CartProvider({ children }) {
     });
   }
 
-  function removeFromCart(productId) {
-    setCartItems((prev) => prev.filter((item) => item.id !== productId));
+  function removeFromCart(key) {
+    setCartItems((prev) =>
+      prev.filter((item) => (item._id || item.id) !== key)
+    );
   }
 
-  function updateQuantity(productId, quantity) {
+  function updateQuantity(key, quantity) {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(key);
       return;
     }
     setCartItems((prev) =>
       prev.map((item) =>
-        item.id === productId ? { ...item, quantity } : item
+        (item._id || item.id) === key ? { ...item, quantity } : item
       )
     );
   }
@@ -79,8 +80,8 @@ export function CartProvider({ children }) {
         clearCart,
         totalItems,
         totalPrice,
-        isCartOpen,        // ← MISSING BEFORE
-        setIsCartOpen,     // ← MISSING BEFORE
+        isCartOpen,
+        setIsCartOpen,
       }}
     >
       {children}
